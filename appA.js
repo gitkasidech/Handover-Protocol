@@ -4,7 +4,7 @@ const request = require("request")
 
 const app = express()
 
-var app_token = "EAAasy1anth4BACLFhixZAvdcPUi4S6ecfmer86WqLwAyg7TAWOt9uP1HeYpLQ9O2ZAOF9ztmBC3PPNxEjRXee5i7plZAEzB9rZBBrpZB5sBGPrbMD8eTo16JwB5mZBdFGSFiO34xnD6TKnfupZAJR08ZBz2kCqNCAVJ5g80kyUmYEwZDZD"
+var app_token = "EAAMbFL9876YBAF2jvbW8BKhzVNeMyHrqWX8W9XRsXq5rzsANWpNdkG8L11ytLz64HHVNmYPOZCW93zz678pZBtodY5pJfKnpgdiqbVIZAcQJwWTQApsve0pWMyZCCL4OrTvWagUH0UrIe9jNO4p6kmleiVifUne1ZBGNhWEk5gQZDZD"
 app.set('port', (process.env.PORT || 5000))
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -14,7 +14,7 @@ app.get('/', function (req, res) {
     res.send("Hi, I am a chatbot 007")
 })
 
-app.get('/webhook', function (req, res) {
+app.get('/a', function (req, res) {
     if (req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === 'xxx') {
         console.log("Validating webhook");
@@ -25,9 +25,9 @@ app.get('/webhook', function (req, res) {
     }
 });
 
-app.post('/webhook', function (req, res) {
+app.post('/a', function (req, res) {
     var data = req.body;
-
+    console.log(data)
     // Make sure this is a page subscription
     if (data.object === 'page') {
 
@@ -38,6 +38,8 @@ app.post('/webhook', function (req, res) {
 
             // Iterate over each messaging event
             entry.messaging.forEach(function (event) {
+                console.log(event)
+                console.log(event.postback)
                 if (event.message) {
                     receivedMessage(event);
                 }
@@ -78,11 +80,14 @@ function receivedMessage(event) {
         // If we receive a text message, check to see if it matches a keyword
         // and send back the example. Otherwise, just echo the text we received.
         switch (messageText) {
-            case 'generic':
+            case 'gen':
                 sendGenericMessage(senderID);
                 break;
             case 'ขาย':
                 buyBooksMessage(senderID);
+                break;
+            case 'สวัสดี':
+                sayHi(senderID);
                 break;
             default:
                 sendTextMessage(senderID, messageText);
@@ -188,6 +193,19 @@ function sendTextMessage(recipientId, messageText) {
         },
         message: {
             text: messageText
+        }
+    };
+
+    callSendAPI(messageData);
+}
+
+function sayHi(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            text: "สวัสดี นี่คือ LeeBot"
         }
     };
 
