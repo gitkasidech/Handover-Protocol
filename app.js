@@ -4,8 +4,9 @@ const request = require("request")
 
 const app = express()
 
-var app_token = "EAABjlvgpvDEBANzcNngL9mipKXU2Hi6bOxZB6tGwjtSpDnuNMM9ttmARHnefBw2ebssduv4EskiJurBBnApkHFOOh88xAtZCkn5naOvkMeg1R84TdOERH76S8v6VFRGMMmUvGh8NMZAy96JRCLxPTseKyaOQs04HiLEbxjgbQZDZD"
-var app_tokenB = "EAACZCB9ZCwGHgBAOOJpI0QHIuzLXlStvxsDsgFVGngr73QxrGRN5BalQvuyc4A8FJHrqpei2oZABzeEHZChk0tUXjkXtarvjGNjXQc8l5OI3MRI0XKQKPXAW1woRy54qxCbTO7GZBNzeZBJ9jFWqGKcgDjXAV4binfwdX0MZCBvmAZDZD"
+var app_token = "EAAEidIjohVEBAAJSkKuRF7j4HiQxuQTijj2m1c4mTZBxxBZCOKxOGIPzZC6IyHdn4hc2oMM4WivaDi7hw6Yhd6whcU4NjHhTw8yUEsaZBQHVX3895e2r0xAp0iwCwID5Nsx8Ni5wYQtALfu3LwbD1VJ3hlCWLARLIjOG8P2ZBxgZDZD"
+var app_tokenB = "EAABwcUqVk8QBADMWPBcb49OE4p2CyTxqLZCVDqiKNfzB5kN37ibR1CYHzqJqXhF0lA9qBZCHKLRmK8CAObCHZA6TX5YsbFXHxZBAiJbUVH0pG2INsqzTNZCW4Pue4kUE7ZAMAAbAUywLxlL04rwwxPYHNkiLK9r56eTUnCy1bHdgZDZD"
+var app_tokenC = "EAAGlnrEPE2IBAEPm6kp5jFzx9FCNzcEvBwtsuL5tgA6S0mFHnFCioNazxjYJ7zWn444eJbg36DWQxxoPTfQNRRtrasTaMdcOLk14N9S6NAPkqcjV5GH5IMuGu8JllZAJcq8zeeqgKuRax0a9jZAFd5HLXZCygK7DSOI5AL2gAZDZD"
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -15,7 +16,7 @@ app.use(bodyParser.json())
 app.get('/', function (req, res) {
     res.send("Hi, I am a chatbot 007")
 })
-
+// ===================================================================================
 app.get('/a', function (req, res) {
     if (req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === 'xxx') {
@@ -28,30 +29,23 @@ app.get('/a', function (req, res) {
 });
 
 app.post('/a', function (req, res) {
-    console.log("app A")
     var data = req.body;
     if (data.object === 'page') {
-
         data.entry.forEach(function (entry) {
             var pageID = entry.id;
             var timeOfEvent = entry.time;
-
             entry.messaging.forEach(function (event) {
                 if (event.message) {
-                    receivedMessage(event);
-                }
-                else if (event.postback) {
-                    receivedPostback(event);
+                    receivedMessageA(event);
                 } else {
                     console.log("Webhook received unknown event: ", event);
                 }
             });
         });
-
         res.sendStatus(200);
     }
 });
-
+// ===================================================================================
 app.get('/b', function (req, res) {
     if (req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === 'yyy') {
@@ -62,32 +56,25 @@ app.get('/b', function (req, res) {
         res.sendStatus(403);
     }
 });
-
 app.post('/b', function (req, res) {
     console.log("app B")
     var data = req.body;
     if (data.object === 'page') {
-
         data.entry.forEach(function (entry) {
             var pageID = entry.id;
             var timeOfEvent = entry.time;
-
             entry.messaging.forEach(function (event) {
                 if (event.message) {
-                    receivedMessage(event);
-                }
-                else if (event.postback) {
-                    receivedPostback(event);
+                    receivedMessageB(event);
                 } else {
                     console.log("Webhook received unknown event: ", event);
                 }
             });
         });
-
         res.sendStatus(200);
     }
 });
-
+// ===================================================================================
 app.get('/c', function (req, res) {
     if (req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === 'zzz') {
@@ -98,33 +85,26 @@ app.get('/c', function (req, res) {
         res.sendStatus(403);
     }
 });
-
 app.post('/c', function (req, res) {
     console.log("app C")
     var data = req.body;
     if (data.object === 'page') {
-
         data.entry.forEach(function (entry) {
             var pageID = entry.id;
             var timeOfEvent = entry.time;
-
             entry.messaging.forEach(function (event) {
                 if (event.message) {
-                    receivedMessage(event);
-                }
-                else if (event.postback) {
-                    receivedPostback(event);
+                    receivedMessageC(event);
                 } else {
                     console.log("Webhook received unknown event: ", event);
                 }
             });
         });
-
         res.sendStatus(200);
     }
 });
-
-function receivedMessage(event) {
+// ===================================================================================
+function receivedMessageA(event) {
     var senderID = event.sender.id;
     var recipientID = event.recipient.id;
     var timeOfMessage = event.timestamp;
@@ -139,16 +119,12 @@ function receivedMessage(event) {
     var messageAttachments = message.attachments;
 
     if (messageText) {
-
         switch (messageText) {
-            case 'gen':
-                sendGenericMessage(senderID);
+            case 'a2b':
+                sendA2B(senderID);
                 break;
-            case 'ขาย':
-                buyBooksMessage(senderID);
-                break;
-            case 'สวัสดี':
-                sayHi(senderID);
+            case 'a2c':
+                sendA2C(senderID);
                 break;
             default:
                 sendTextMessage(senderID, messageText);
@@ -158,95 +134,73 @@ function receivedMessage(event) {
     }
 
 }
-
-function buyBooksMessage(recipientId, messageText) {
+// ====================================================================================
+function sendA2B(recipientId) {
     var messageData = {
         recipient: {
             id: recipientId
         },
-        message: {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "button",
-                    text: "ต้องการอะไร",
-                    buttons: [
-                        {
-                            type: "web_url",
-                            url: "https://facebook.com/mebooksthailand",
-                            title: "เพจ Mebooks"
-                        },
-                        {
-                            type: "postback",
-                            title: "Come Back",
-                            payload: "Payload for first bubble"
-                        },
-                        {
-                            type: "web_url",
-                            url: "https://facebook.com/leeangkit",
-                            title: "Chailee"
-                        }]
-
-                }
-            }
-        }
+        target_app_id: 123631884932036,
+        metadata: "free formed text for another app"
     };
 
-    callSendAPI(messageData);
+    callAPIA2B(messageData);
 }
+function callAPIA2B(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/pass_thread_control',
+        qs: { access_token: app_token },
+        method: 'POST',
+        json: messageData
 
-function sendGenericMessage(recipientId, messageText) {
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var recipientId = body.recipient_id;
+            var messageId = body.message_id;
+
+            console.log("Successfully sent generic message with id %s to recipient %s",
+                messageId, recipientId);
+        } else {
+            console.error("Unable to send message.");
+            console.error(response);
+            console.error(error);
+        }
+    });
+}
+// ====================================================================================
+function sendA2C(recipientId) {
     var messageData = {
         recipient: {
             id: recipientId
         },
-        message: {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "generic",
-                    elements: [{
-                        title: "rift",
-                        subtitle: "Next-generation virtual reality",
-                        item_url: "https://www.oculus.com/en-us/rift/",
-                        image_url: "http://messengerdemo.parseapp.com/img/rift.png",
-                        buttons: [{
-                            type: "web_url",
-                            url: "https://www.oculus.com/en-us/rift/",
-                            title: "Open Web URL"
-                        }, {
-                            type: "postback",
-                            title: "Call Postback",
-                            payload: "Payload for first bubble"
-                        },
-                        {
-                            type: "web_url",
-                            url: "https://facebook.com/mebooksthailand",
-                            title: "เพจ MeBOOKs"
-                        }],
-                    }, {
-                        title: "touch",
-                        subtitle: "Your Hands, Now in VR",
-                        item_url: "https://www.oculus.com/en-us/touch/",
-                        image_url: "http://messengerdemo.parseapp.com/img/touch.png",
-                        buttons: [{
-                            type: "web_url",
-                            url: "https://www.oculus.com/en-us/touch/",
-                            title: "Open Web URL"
-                        }, {
-                            type: "postback",
-                            title: "Call Postback",
-                            payload: "Payload for second bubble"
-                        }]
-                    }]
-                }
-            }
-        }
+        target_app_id: 463575970681698,
+        metadata: "free formed text for another app"
     };
 
-    callSendAPI(messageData);
+    callAPIA2C(messageData);
 }
+function callAPIA2C(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/pass_thread_control',
+        qs: { access_token: app_token },
+        method: 'POST',
+        json: messageData
 
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var recipientId = body.recipient_id;
+            var messageId = body.message_id;
+
+            console.log("Successfully sent generic message with id %s to recipient %s",
+                messageId, recipientId);
+        } else {
+            console.error("Unable to send message.");
+            console.error(response);
+            console.error(error);
+        }
+    });
+}
+// ========================================================================================
 function sendTextMessage(recipientId, messageText) {
     var messageData = {
         recipient: {
@@ -259,20 +213,6 @@ function sendTextMessage(recipientId, messageText) {
 
     callSendAPI(messageData);
 }
-
-function sayHi(recipientId) {
-    var messageData = {
-        recipient: {
-            id: recipientId
-        },
-        message: {
-            text: "สวัสดี นี่คือ LeeBot"
-        }
-    };
-
-    callSendAPI(messageData);
-}
-
 function callSendAPI(messageData) {
     request({
         uri: 'https://graph.facebook.com/v2.6/me/messages',
@@ -294,20 +234,201 @@ function callSendAPI(messageData) {
         }
     });
 }
-
-function receivedPostback(event) {
+// =======================================================================================
+function receivedMessageB(event) {
     var senderID = event.sender.id;
     var recipientID = event.recipient.id;
-    var timeOfPostback = event.timestamp;
+    var timeOfMessage = event.timestamp;
+    var message = event.message;
 
-    var payload = event.postback.payload;
+    console.log("Received message for user %d and page %d at %d with message:",
+        senderID, recipientID, timeOfMessage);
 
-    console.log("Received postback for user %d and page %d with payload '%s' " +
-        "at %d", senderID, recipientID, payload, timeOfPostback);
+    var messageId = message.mid;
 
-    sendTextMessage(senderID, "Postback called");
+    var messageText = message.text;
+    var messageAttachments = message.attachments;
+
+    if (messageText) {
+        switch (messageText) {
+            case 'b2a':
+                sendB2A(senderID);
+                break;
+            case 'b2c':
+                sendB2C(senderID);
+                break;
+            default:
+                break;
+        }
+    } else if (messageAttachments) {
+        sendTextMessage(senderID, "Message with attachment received");
+    }
+
 }
+// ===================================================================================
+function sendB2A(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        target_app_id: 319358885201233,
+        metadata: "free formed text for another app"
+    };
 
+    callAPIB2A(messageData);
+}
+function callAPIB2A(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/pass_thread_control',
+        qs: { access_token: app_tokenB },
+        method: 'POST',
+        json: messageData
+
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var recipientId = body.recipient_id;
+            var messageId = body.message_id;
+
+            console.log("Successfully sent generic message with id %s to recipient %s",
+                messageId, recipientId);
+        } else {
+            console.error("Unable to send message.");
+            console.error(response);
+            console.error(error);
+        }
+    });
+}
+// ===================================================================================
+function sendB2C(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        target_app_id: 463575970681698,
+        metadata: "free formed text for another app"
+    };
+
+    callAPIB2C(messageData);
+}
+function callAPIB2C(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/pass_thread_control',
+        qs: { access_token: app_tokenB },
+        method: 'POST',
+        json: messageData
+
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var recipientId = body.recipient_id;
+            var messageId = body.message_id;
+
+            console.log("Successfully sent generic message with id %s to recipient %s",
+                messageId, recipientId);
+        } else {
+            console.error("Unable to send message.");
+            console.error(response);
+            console.error(error);
+        }
+    });
+}
+// ===================================================================================
+function receivedMessageC(event) {
+    var senderID = event.sender.id;
+    var recipientID = event.recipient.id;
+    var timeOfMessage = event.timestamp;
+    var message = event.message;
+
+    console.log("Received message for user %d and page %d at %d with message:",
+        senderID, recipientID, timeOfMessage);
+
+    var messageId = message.mid;
+
+    var messageText = message.text;
+    var messageAttachments = message.attachments;
+
+    if (messageText) {
+        switch (messageText) {
+            case 'c2a':
+                sendC2A(senderID);
+                break;
+            case 'c2b':
+                sendC2B(senderID);
+                break;
+            default:
+                break;
+        }
+    } else if (messageAttachments) {
+        sendTextMessage(senderID, "Message with attachment received");
+    }
+
+}
+// ===================================================================================
+function sendC2A(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        target_app_id: 319358885201233,
+        metadata: "free formed text for another app"
+    };
+
+    callAPIC2A(messageData);
+}
+function callAPIC2A(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/pass_thread_control',
+        qs: { access_token: app_tokenC },
+        method: 'POST',
+        json: messageData
+
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var recipientId = body.recipient_id;
+            var messageId = body.message_id;
+
+            console.log("Successfully sent generic message with id %s to recipient %s",
+                messageId, recipientId);
+        } else {
+            console.error("Unable to send message.");
+            console.error(response);
+            console.error(error);
+        }
+    });
+}
+// ===================================================================================
+function sendC2B(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        target_app_id: 123631884932036,
+        metadata: "free formed text for another app"
+    };
+
+    callAPIC2B(messageData);
+}
+function callAPIC2B(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/pass_thread_control',
+        qs: { access_token: app_tokenC },
+        method: 'POST',
+        json: messageData
+
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var recipientId = body.recipient_id;
+            var messageId = body.message_id;
+
+            console.log("Successfully sent generic message with id %s to recipient %s",
+                messageId, recipientId);
+        } else {
+            console.error("Unable to send message.");
+            console.error(response);
+            console.error(error);
+        }
+    });
+}
+// ===================================================================================
 app.listen(app.get('port'), function () {
     console.log("running: port")
 })
